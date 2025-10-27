@@ -43,10 +43,10 @@ class PerevalSerializer(serializers.ModelSerializer):
         level_data = validated_data.pop('level')
         images_data = validated_data.pop('images')
 
-        # Создаём или находим пользователя
+
         user, created = User.objects.get_or_create(email=user_data['email'], defaults=user_data)
 
-        # Создаём перевал
+
         pereval = Pereval.objects.create(
             user=user,
             status='new',
@@ -69,7 +69,7 @@ class PerevalSerializer(serializers.ModelSerializer):
             img_base64 = img_data['data']
             img_title = img_data['title']
 
-            # Убираем префикс, если есть (например, "image/jpeg;base64,...")
+            # Убираем префикс
             if ',' in img_base64:
                 header, img_base64 = img_base64.split(',', 1)
 
