@@ -33,11 +33,11 @@ class Pereval(models.Model):
     add_time = models.DateTimeField()
     status = models.CharField(max_length=16, choices=STATUS_CHOICES, default='new')
 
-
+    # Внешние ключи
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='perevals')
     coords = models.ForeignKey(Coords, on_delete=models.CASCADE, null=True, blank=True)
 
-
+    # Уровни сложности
     winter = models.CharField(max_length=16, blank=True)
     summer = models.CharField(max_length=16, blank=True)
     autumn = models.CharField(max_length=16, blank=True)
