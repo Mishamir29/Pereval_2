@@ -10,6 +10,14 @@ class User(models.Model):
     def __str__(self):
         return f"{self.name} {self.fam}"
 
+class Coords(models.Model):
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+    height = models.IntegerField()
+
+    def __str__(self):
+        return f"{self.latitude}, {self.longitude}, {self.height}m"
+
 class Pereval(models.Model):
     STATUS_CHOICES = [
         ('new', 'New'),
@@ -25,24 +33,31 @@ class Pereval(models.Model):
     add_time = models.DateTimeField()
     status = models.CharField(max_length=16, choices=STATUS_CHOICES, default='new')
 
-    latitude = models.FloatField()
-    longitude = models.FloatField()
-    height = models.IntegerField()
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='perevals')
+    coords = models.ForeignKey(Coords, on_delete=models.CASCADE, null=True, blank=True)
+
 
     winter = models.CharField(max_length=16, blank=True)
     summer = models.CharField(max_length=16, blank=True)
     autumn = models.CharField(max_length=16, blank=True)
     spring = models.CharField(max_length=16, blank=True)
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='perevals')
-
     def __str__(self):
         return self.title
 
 class Image(models.Model):
-    pereval = models.ForeignKey(Pereval, on_delete=models.CASCADE, related_name='images')
     title = models.CharField(max_length=256)
-    path = models.CharField(max_length=512)  # путь к файлу или URL
+    path = models.CharField(max_length=512)
 
     def __str__(self):
-        return f"{self.title} ({self.pereval.title})"
+        return self.title
+
+class PerevalImage(models.Model):
+    pereval = models.ForeignKey(Pereval, on_delete=models.CASCADE, related_name='images')
+    image = models.ForeignKey(Image, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('pereval', 'image')
+    def __str__(self):
+        return f"{self.pereval.title} - {self.image.title}"
