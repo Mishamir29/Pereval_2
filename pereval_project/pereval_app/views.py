@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from .models import Pereval, User
 from .serializers import PerevalSerializer
 
+
 @api_view(['POST'])
 def submit_data(request):
     serializer = PerevalSerializer(data=request.data)
@@ -20,6 +21,7 @@ def submit_data(request):
             status=status.HTTP_400_BAD_REQUEST
         )
 
+
 @api_view(['GET'])
 def get_pereval_by_id(request, id):
     try:
@@ -32,8 +34,10 @@ def get_pereval_by_id(request, id):
 
     serializer = PerevalSerializer(pereval)
     data = serializer.data
+    # Добавляем статус в ответ, если его нет
     data['status'] = pereval.status
     return Response(data)
+
 
 @api_view(['PATCH'])
 def edit_pereval(request, id):
@@ -45,15 +49,17 @@ def edit_pereval(request, id):
             status=status.HTTP_404_NOT_FOUND
         )
 
+
     if pereval.status != 'new':
         return Response(
             {"state": 0, "message": "Editing is allowed only for entries with status 'new'"},
             status=status.HTTP_400_BAD_REQUEST
         )
 
+
     data = request.data.copy()
     if 'user' in data:
-        data.pop('user')  # Запрещено изменять
+        data.pop('user')
 
     serializer = PerevalSerializer(pereval, data=data, partial=True)
 
@@ -65,6 +71,7 @@ def edit_pereval(request, id):
             {"state": 0, "message": "Invalid data"},
             status=status.HTTP_400_BAD_REQUEST
         )
+
 
 @api_view(['GET'])
 def get_perevals_by_user_email(request):
